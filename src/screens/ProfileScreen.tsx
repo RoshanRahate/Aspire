@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 
-interface SettingsScreenProps {}
+interface ProfileScreenProps {}
 
-const SettingsScreen = (props: SettingsScreenProps) => {
+const ProfileScreen = (props: ProfileScreenProps) => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <Text>Settings !</Text>
+    <Text>Profile in progress!</Text>
   </View>
 
   );
 };
 
-export default SettingsScreen;
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {}

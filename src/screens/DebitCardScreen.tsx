@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, SafeAreaView, ScrollView, Image, Switch, Dimensions } from 'react-native';
 
 import CardView from '../components/CardView';
@@ -14,11 +14,25 @@ interface DebitCardScreenProps {
 
 const DebitCardScreen = ({ navigation }) => {
 
-  const { debitCardDetails } = useDebitCardDetails();
+  const { debitCardDetails, updateSpendingLimit } = useDebitCardDetails();
 
   const toggleSwitch = (enabled) => {
-    enabled && navigation.navigate('SpendingLimitScreen');
+
+    if (enabled) {
+      navigation.navigate('SpendingLimitScreen', debitCardDetails);
+    } else {
+      updateSpendingLimit(false, 0);
+    }
   }
+
+useEffect(() => {
+  const unsubscribe = navigation.addListener('focus', () => {
+    console.log('debitCardDetails', debitCardDetails);
+  });
+
+  return unsubscribe;
+}, [navigation]);
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,7 +94,7 @@ const DebitCardScreen = ({ navigation }) => {
                 style={styles.optionImage}
                 source={require('../assets/insight.png')}
               />
-              <View style={styles.rowTextWrapper}>
+              <View style={[styles.rowTextWrapper, styles.topMargin]}>
                 <Text style={styles.weeklyLimitTitle}>Top-up account</Text>
                 <Text style={styles.descriptionLabel}>Deposit money to your account to use with card</Text>
               </View>
@@ -132,7 +146,7 @@ const DebitCardScreen = ({ navigation }) => {
                 style={styles.optionImage}
                 source={require('../assets/insight.png')}
               />
-              <View style={styles.rowTextWrapper}>
+              <View style={[styles.rowTextWrapper, styles.bottomMargin]}>
                 <Text style={styles.weeklyLimitTitle}>Freeze Card</Text>
                 <Text style={styles.descriptionLabel}>Your previously deactivated cards</Text>
               </View>
@@ -273,6 +287,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     width: '75%',
     marginVertical: 5,
+    marginBottom: 20
+  }, 
+  topMargin:{
+    marginTop: 20
+  }, 
+  bottomMargin:{
     marginBottom: 20
   }
 });

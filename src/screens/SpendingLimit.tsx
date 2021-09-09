@@ -1,25 +1,28 @@
 import React, { useState, } from 'react';
-import { Image, View, StyleSheet, Text, SafeAreaView, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { Image, View, StyleSheet, Text, SafeAreaView, TextInput, TouchableOpacity , Keyboard, TouchableWithoutFeedback} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useDebitCardDetails } from '../hooks/useDebitCardDetails';
 import { currencyFormatter } from '../utility';
+import Constants from '../utility/Constants';
 
 interface SpendingLimitScreenProps { }
 
-const SpendingLimitScreen = (props: SpendingLimitScreenProps) => {
+const SpendingLimitScreen = ({navigation, route: {params}}) => {
 
-    const [amount, setAmount] = useState('5000');
+    const [amount, setAmount] = useState(Constants.suggestedLimits[0]);
+    const { updateSpendingLimit } = useDebitCardDetails();
 
     const onAmountChange = (event) => {
-        console.log(event);
         let amount = event.nativeEvent.text.trim();
         setAmount(currencyFormatter(amount));
     }
-
     return (
         <SafeAreaView style={styles.container}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
             <View style={styles.wrapperView}>
                 <View style={styles.navigationView}>
-                    <TouchableOpacity onPress={props.navigation.goBack}>
+                    <TouchableOpacity onPress={navigation.goBack}>
                         <Icon color={'#fff'} size={30} name={'keyboard-arrow-left'} />
                     </TouchableOpacity>
                     <Image
@@ -44,8 +47,9 @@ const SpendingLimitScreen = (props: SpendingLimitScreenProps) => {
                             <Text style={styles.currencyText}>S$</Text>
                         </View>
                         <TextInput
+                        autoFocus
                             keyboardType='number-pad'
-                            value={amount}
+                            value={currencyFormatter(amount.toString())}
                             onChange={onAmountChange}
                             style={styles.amountText}></TextInput>
                     </View>
@@ -53,29 +57,25 @@ const SpendingLimitScreen = (props: SpendingLimitScreenProps) => {
 
                     <Text style={styles.descriptionText}>Here weekly means the last 7 days - not the calendar week</Text>
                     <View style={styles.amountSelectionView}>
-                        <TouchableOpacity
-                            style={styles.amountSelectionButton}
-                            onPress={() => setAmount('5,000')}>
-                            <Text style={styles.amountValue}>S$ 5,000</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.amountSelectionButton}
-                            onPress={() => setAmount('10,000')}>
-                            <Text style={styles.amountValue}>S$ 10,000</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.amountSelectionButton}
-                            onPress={() => setAmount('20,000')}>
-                            <Text style={styles.amountValue}>S$ 20,000</Text>
-                        </TouchableOpacity>
+                        {
+                            Constants.suggestedLimits.map((value, index) =>
+                                <TouchableOpacity
+                                    key= {index}
+                                    style={styles.amountSelectionButton}
+                                    onPress={() => setAmount(value)}>
+                                    <Text style={styles.amountValue}>S$ {currencyFormatter(value)}</Text>
+                                </TouchableOpacity>
+                            )
+                        }
                     </View>
                     <TouchableOpacity
                         style={styles.saveButton}
-                        onPress={() => console.log("prees")}>
+                        onPress={() => updateSpendingLimit(true, amount)}>
                         <Text style={styles.saveButtonText}>Save</Text>
                     </TouchableOpacity>
                 </View>
             </View>
+            </TouchableWithoutFeedback>
         </SafeAreaView>
 
     );
@@ -89,11 +89,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#0C365A'
     },
-    wrapperView: { width: '100%' },
-    navigationView: { flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 20 },
+    wrapperView: {
+        width: '100%'
+    },
+    navigationView: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginHorizontal: 20
+    },
     rightLogo: {
         width: 25,
-        height: 25
+        height: 25, marginTop: 10
     },
     spendingLimitText: {
         color: '#222222',
@@ -151,18 +157,17 @@ const styles = StyleSheet.create({
         fontFamily: 'Avenir Next',
         fontWeight: 'bold',
         paddingLeft: 10,
-        color: '#222222'
+        color: '#222222',
+        width: '90%'
     },
     saveButton: {
         position: 'absolute',
-        bottom: 30,
+        bottom: 80,
         alignSelf: 'center',
-        alignItems: 'center',
         backgroundColor: '#01D167',
         width: 200,
         paddingHorizontal: 40,
         paddingVertical: 8,
-        // height: 40,
         borderRadius: 20,
     },
     saveButtonText: {
@@ -176,18 +181,22 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginHorizontal: 20,
         justifyContent: 'space-around',
+        flexWrap: 'wrap'
     },
     amountSelectionButton: {
-        backgroundColor: '#01D167',
+        // backgroundColor: '#01D167',
         paddingHorizontal: 10,
         paddingVertical: 8,
         marginTop: 10,
         borderRadius: 4,
-        alignItems: 'center'
+        alignItems: 'center',
+        // opacity:0.5,
+        backgroundColor: 'rgba(1,209,103,0.6)'
     },
     amountValue: {
         color: '#fff',
-        textAlign: 'center'
+        textAlign: 'center',
+        fontWeight: '500'
     },
     descriptionText: {
         alignSelf: 'center',
