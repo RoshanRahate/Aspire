@@ -16,12 +16,11 @@ const CardView = ({
     cardCVV,
     cardType
 }) => {
+    
     const [hidden, setHidden] = useState(false);
-
     return (
         <View
             style={styles.container}>
-                
             <TouchableOpacity
                 style={styles.hideView}
                 onPress={() => {
@@ -49,18 +48,17 @@ const CardView = ({
                     >
                     </Image>
                 </View>
-                <Text
-                    onPress={alert}
-                    style={styles.cardHolderName}>{cardHolderName}</Text>
+                <Text style={styles.cardHolderName}>{cardHolderName}</Text>
+
                 <View style={styles.cardNumberView}>
-                    <Text style={styles.cardNumberText}>{hidden ? '****' : '1234'}</Text>
-                    <Text style={styles.cardNumberText}>{hidden ? '****' : '5234'}</Text>
-                    <Text style={styles.cardNumberText}>{hidden ? '****' : '1232'}</Text>
-                    <Text style={styles.cardNumberText}>{'4312'}</Text>
+                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber && cardNumber.slice(0, 4)}</Text>
+                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber &&  cardNumber.slice(4, 8)}</Text>
+                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber &&  cardNumber.slice(8, 12)}</Text>
+                    <Text style={styles.cardNumberText}>{cardNumber &&  cardNumber.slice(12, 16)}</Text>
                 </View>
                 <View style={styles.expiryAndCVV}>
-                    <Text style={styles.cardNumberText}>{`Thru: ${cardValidity}`}</Text>
-                    <Text style={styles.cardNumberText}>{`CVV: ${hidden ? '***' : cardCVV}`}</Text>
+                    <Text style={styles.cardNumberText}>{`Thru: ${ cardValidity && cardValidity}`}</Text>
+                    <Text style={styles.cardNumberText}>{`CVV: ${hidden ? '***' : cardCVV && cardCVV}`}</Text>
                 </View>
                 <View style={styles.visaImageView}>
                     <Image
@@ -81,8 +79,8 @@ const styles = StyleSheet.create({
         // flex: 1,
         width: '90%',
         alignSelf: 'center',
-        position: 'absolute',
-        top: -100
+        // position: 'absolute',
+        marginTop: -100
     },
     cardView: {
         backgroundColor: '#01D167',
@@ -124,7 +122,6 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: 'bold',
         margin: 20,
-        marginTop: 25,
         color: '#FFFFFF',
         fontFamily: 'Avenir Next'
     },
@@ -133,7 +130,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         marginHorizontal: 20,
-        marginVertical: 10
+        marginVertical: 5
     },
     cardNumberText: {
         letterSpacing: 4,
@@ -156,6 +153,7 @@ const styles = StyleSheet.create({
     },
     visaImage: {
         width: 60,
-        height: 60
+        height: 40,
+        marginBottom: 10
     }
 });

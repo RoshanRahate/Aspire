@@ -1,6 +1,7 @@
 import React, { useState, } from 'react';
 import { Image, View, StyleSheet, Text, SafeAreaView, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { currencyFormatter } from '../utility';
 
 interface SpendingLimitScreenProps { }
 
@@ -9,20 +10,15 @@ const SpendingLimitScreen = (props: SpendingLimitScreenProps) => {
     const [amount, setAmount] = useState('5000');
 
     const onAmountChange = (event) => {
-        let amount = event.nativeEvent.text.trim()
-        setAmount(currencyFormatter(amount))
+        console.log(event);
+        let amount = event.nativeEvent.text.trim();
+        setAmount(currencyFormatter(amount));
     }
-
-
-    const currencyFormatter = value => {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    };
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={{ width: '100%', }}>
-                <View style=
-                    {{ flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 20 }}>
+            <View style={styles.wrapperView}>
+                <View style={styles.navigationView}>
                     <TouchableOpacity onPress={props.navigation.goBack}>
                         <Icon color={'#fff'} size={30} name={'keyboard-arrow-left'} />
                     </TouchableOpacity>
@@ -93,6 +89,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#0C365A'
     },
+    wrapperView: { width: '100%' },
+    navigationView: { flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 20 },
     rightLogo: {
         width: 25,
         height: 25
@@ -145,7 +143,7 @@ const styles = StyleSheet.create({
     },
     amountView: {
         flexDirection: 'row',
-        margin: 20,
+        marginHorizontal: 20,
         alignItems: 'center'
     },
     amountText: {
