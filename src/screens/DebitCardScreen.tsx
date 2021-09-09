@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, ScrollView, Button, Image, Switch } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, ScrollView, Button, Image, Switch, Dimensions } from 'react-native';
 
 import CardView from '../components/CardView';
+
+const windowHeight = Dimensions.get('window').height;
 
 interface DebitCardScreenProps {
   navigation: Object
@@ -40,80 +42,139 @@ const DebitCardScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ width: '90%', flexDirection: 'row', justifyContent: 'flex-end', marginHorizontal: 20 }}>
+      {/* <View style={{ position: 'absolute', }}> */}
+      <View 
+      style={{
+        width: '90%',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginHorizontal: 20,
+        marginTop: 10
+      }}>
         <Image
           resizeMode={"contain"}
           style={{ width: 25, height: 25 }}
           source={require('../assets/Logo.png')}
         />
       </View>
-      <View style={{
-        backgroundColor: 'grey',
-        width: '100%'
-      }}>
-        <Text style={styles.debitText}>Debit Card</Text>
-        <Text style={styles.availableBalance}>Available balance</Text>
-        <View style={styles.amountView}>
-          <View style={styles.currencyView}>
-            <Text style={styles.currencyText}>S$</Text>
+      <View style={{ width: '100%', }}>
+        <View style={{
+          width: '100%'
+        }}>
+          <Text 
+          style={styles.debitText}>Debit Card</Text>
+          <Text style={styles.availableBalance}>Available balance</Text>
+          <View style={styles.amountView}>
+            <View style={styles.currencyView}>
+              <Text style={styles.currencyText}>S$</Text>
+            </View>
+            <Text style={styles.amountText}>{debitCardDetails && debitCardDetails.available_balance}</Text>
           </View>
-          <Text style={styles.amountText}>{debitCardDetails && debitCardDetails.available_balance}</Text>
         </View>
+        {/* </View> */}
+        <ScrollView
+          style={{
+            top: -185,
+            // backgroundColor: 'red'
+          }}
+          contentContainerStyle={{
+            backgroundColor: 'transparent',
+            width: '100%',
+          }}
+        >
+          <View style={{
+            marginTop: 250,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            backgroundColor: '#fff',
+          }}>
+            <View
+              style={{ height: 200, }}>
+              <CardView
+                cardHolderName={debitCardDetails.card_holder_name}
+                cardCVV={debitCardDetails.cvv}
+                cardNumber={debitCardDetails.card_number}
+                cardType={debitCardDetails.card_type}
+                cardValidity={debitCardDetails.validity}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
+              <Image
+                resizeMode={"contain"}
+                style={{ width: 30, height: 30 }}
+                source={require('../assets/Transfer_limit.png')}
+              />
+              <View style={{ marginHorizontal: 10, marginVertical: 10, }}>
+                <Text style={styles.weeklyLimitTitle}>Top-up account</Text>
+                <Text style={styles.descriptionLabel}>Deposit money to your account to use with card</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
+              <Image
+                resizeMode={"contain"}
+                style={{ width: 30, height: 30 }}
+                source={require('../assets/Transfer_limit.png')}
+              />
+              <View style={{ marginHorizontal: 10, width: '75%', margin: 10, }}>
+                <Text style={styles.weeklyLimitTitle}>Weekly spending limit</Text>
+                <Text style={styles.descriptionLabel}>You haven’t set any spending limit on card</Text>
+              </View>
+              <Switch
+                style={styles.switch}
+                trackColor={{ false: "#01D167", true: "#01D167" }}
+                thumbColor={"#FFFFFF"}
+                onValueChange={toggleSwitch}
+                value={debitCardDetails.set_weekly_limit}
+              />
+            </View>
+            <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
+              <Image
+                resizeMode={"contain"}
+                style={{ width: 30, height: 30 }}
+                source={require('../assets/Transfer_limit.png')}
+              />
+              <View style={{ marginHorizontal: 10, width: '75%', marginVertical: 10, }}>
+                <Text style={styles.weeklyLimitTitle}>Get a new card</Text>
+                <Text style={styles.descriptionLabel}>This deactivates your current debit card</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
+              <Image
+                resizeMode={"contain"}
+                style={{ width: 30, height: 30 }}
+                source={require('../assets/Transfer_limit.png')}
+              />
+              <View style={{ marginHorizontal: 10, width: '75%', marginVertical: 10, }}>
+                <Text style={styles.weeklyLimitTitle}>Get a new card</Text>
+                <Text style={styles.descriptionLabel}>This deactivates your current debit card</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
+              <Image
+                resizeMode={"contain"}
+                style={{ width: 30, height: 30 }}
+                source={require('../assets/Transfer_limit.png')}
+              />
+              <View style={{ marginHorizontal: 10, width: '75%', marginVertical: 10, }}>
+                <Text style={styles.weeklyLimitTitle}>Get a new card</Text>
+                <Text style={styles.descriptionLabel}>This deactivates your current debit card</Text>
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
+              <Image
+                resizeMode={"contain"}
+                style={{ width: 30, height: 30 }}
+                source={require('../assets/Transfer_limit.png')}
+              />
+              <View style={{ marginHorizontal: 10, width: '75%', marginVertical: 10,marginBottom: 30 }}>
+                <Text style={styles.weeklyLimitTitle}>Get a new card</Text>
+                <Text style={styles.descriptionLabel}>This deactivates your current debit card</Text>
+              </View>
+            </View>
+          </View>
+          
+        </ScrollView>
       </View>
-      <ScrollView>
-        <View style={{ position: 'relative', backgroundColor: '#fff', width: '100%' }}>
-          <CardView
-            cardHolderName={debitCardDetails.card_holder_name}
-            cardCVV={debitCardDetails.cvv}
-            cardNumber={debitCardDetails.card_number}
-            cardType={debitCardDetails.card_type}
-            cardValidity={debitCardDetails.validity}
-          />
-
-          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
-            <Image
-              resizeMode={"contain"}
-              style={{ width: 30, height: 30 }}
-              source={require('../assets/Transfer_limit.png')}
-            />
-            <View style={{ marginHorizontal: 10, marginVertical: 10, }}>
-              <Text style={styles.weeklyLimitTitle}>Top-up account</Text>
-              <Text style={styles.descriptionLabel}>Deposit money to your account to use with card</Text>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
-            <Image
-              resizeMode={"contain"}
-              style={{ width: 30, height: 30 }}
-              source={require('../assets/Transfer_limit.png')}
-            />
-            <View style={{ marginHorizontal: 10, width: '75%', margin: 10, }}>
-              <Text style={styles.weeklyLimitTitle}>Weekly spending limit</Text>
-              <Text style={styles.descriptionLabel}>You haven’t set any spending limit on card</Text>
-            </View>
-            <Switch
-              style={styles.switch}
-              trackColor={{ false: "#01D167", true: "#01D167" }}
-              thumbColor={"#FFFFFF"}
-              onValueChange={toggleSwitch}
-              value={debitCardDetails.set_weekly_limit}
-            />
-          </View>
-          <View style={{ flexDirection: 'row', marginHorizontal: 20, marginTop: 20, alignItems: 'center', }}>
-            <Image
-              resizeMode={"contain"}
-              style={{ width: 30, height: 30 }}
-              source={require('../assets/Transfer_limit.png')}
-            />
-            <View style={{ marginHorizontal: 10, width: '75%', marginVertical: 10, }}>
-              <Text style={styles.weeklyLimitTitle}>Get a new card</Text>
-              <Text style={styles.descriptionLabel}>This deactivates your current debit card</Text>
-            </View>
-          </View>
-        </View>
-      </ScrollView>
-
-
     </SafeAreaView>
   );
 };
@@ -130,7 +191,7 @@ const styles = StyleSheet.create({
   debitText: {
     fontSize: 24,
     color: '#fff',
-    margin: 20,
+    padding: 20,
     fontFamily: 'Avenir Next',
     fontWeight: 'bold'
   },
@@ -149,7 +210,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     color: '#fff',
-    marginHorizontal: 20,
+    paddingHorizontal: 20,
   },
   amountView: {
     flexDirection: 'row',
@@ -160,7 +221,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontFamily: 'Avenir Next',
     fontWeight: 'bold',
-    paddingLeft: 10, color: '#fff'
+    paddingLeft: 10,
+    color: '#fff'
   },
 
   //

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, Text, View, StyleSheet, Pressable } from 'react-native';
+import { Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface CardViewProps {
     cardHolderName: String,
@@ -19,22 +19,27 @@ const CardView = ({
     const [hidden, setHidden] = useState(false);
 
     return (
-        <View style={styles.container}>
-            <View
-                style={styles.hideView}>
-                <Pressable
-                    onPress={() => setHidden(!hidden)}>
-                    <View style={styles.hideContentsView}>
-                        <Image
-                            resizeMode={"contain"}
-                            style={styles.eyeImage}
-                            source={hidden ? require('../assets/show_eye.png') : require('../assets/eye_closed.png')}
-                        >
-                        </Image>
-                        <Text style={styles.hideText}>Hide card number</Text>
-                    </View>
-                </Pressable>
-            </View>
+        <View
+            style={styles.container}>
+                
+            <TouchableOpacity
+                style={styles.hideView}
+                onPress={() => {
+                    console.log("presed ")
+                    setHidden(!hidden)
+                }}>
+                <View
+                    style={styles.hideContentsView}>
+                    <Image
+                        resizeMode={"contain"}
+                        style={styles.eyeImage}
+                        source={hidden ? require('../assets/show_eye.png') : require('../assets/eye_closed.png')}
+                    >
+                    </Image>
+                    <Text style={styles.hideText}>Hide card number</Text>
+                </View>
+            </TouchableOpacity>
+
             <View style={styles.cardView}>
                 <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginHorizontal: 20, }}>
                     <Image
@@ -44,7 +49,9 @@ const CardView = ({
                     >
                     </Image>
                 </View>
-                <Text style={styles.cardHolderName}>{cardHolderName}</Text>
+                <Text
+                    onPress={alert}
+                    style={styles.cardHolderName}>{cardHolderName}</Text>
                 <View style={styles.cardNumberView}>
                     <Text style={styles.cardNumberText}>{hidden ? '****' : '1234'}</Text>
                     <Text style={styles.cardNumberText}>{hidden ? '****' : '5234'}</Text>
@@ -74,10 +81,8 @@ const styles = StyleSheet.create({
         // flex: 1,
         width: '90%',
         alignSelf: 'center',
-        // position: 'absolute',
-        // left:     0,
-        // top:      -100,
-        
+        position: 'absolute',
+        top: -100
     },
     cardView: {
         backgroundColor: '#01D167',
