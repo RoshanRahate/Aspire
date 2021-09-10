@@ -1,21 +1,45 @@
-import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, SafeAreaView, ScrollView, Image, Switch, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Text, SafeAreaView, ScrollView, Image, Switch, Dimensions, TouchableOpacity } from 'react-native';
+import { useSelector, useDispatch } from "react-redux";
+import { setCardDetails, updateCardDetails } from '../reducers/uiReducer';
 
 import CardView from '../components/CardView';
 import ProgressBar from 'react-native-progress/Bar';
-import { useDebitCardDetails } from '../hooks/useDebitCardDetails';
 import { currencyFormatter } from '../utility';
+import Constants from '../utility/Constants';
 
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
-interface DebitCardScreenProps {
-  navigation: Object
-}
+import { updateCardSpendingLimit } from '../utility';
 
 const DebitCardScreen = ({ navigation }) => {
 
-  const { debitCardDetails, updateSpendingLimit } = useDebitCardDetails();
+  const dispatch = useDispatch();
+  
+  const debitCardDetails = useSelector(
+    (state) => state.ui.debitCardDetails
+  )
 
+  useEffect(() => {
+    console.log("useDebitCardDetails called ");
+    const getDebitCardDetails = async () => {
+      try {
+        const result = await fetch(Constants.API_URL);
+        const cardDetails = await result.json();
+        console.log(result)
+        dispatch(setCardDetails(cardDetails))
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getDebitCardDetails();
+  }, []);
+
+  const[data, setData] = useState({});
+  // const { updateSpendingLimit } = useDebitCardDetails();
+  
   const toggleSwitch = (enabled) => {
 
     if (enabled) {
@@ -25,14 +49,38 @@ const DebitCardScreen = ({ navigation }) => {
     }
   }
 
-useEffect(() => {
-  const unsubscribe = navigation.addListener('focus', () => {
-    console.log('debitCardDetails', debitCardDetails);
-  });
 
-  return unsubscribe;
-}, [navigation]);
+  const updateSpendingLimit = async(isEnabled, amount) => {
+      //   updateCardSpendingLimit(isEnabled, amount)
+      // .then((details) => {
+      //   console.log("inside --", details);
+      //   useEffect(() => {
+      //     dispatch(updateCardDetails(details));
+      //   }, [])
+      // })
+      // .catch(e => console.log(e));
+  
+    let updatedDetails = Object.assign({}, debitCardDetails);
+    updatedDetails.weekly_limit = amount;
+    updatedDetails.set_weekly_limit = isEnabled;
+    const requestJson = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedDetails)
+    };
+    try {
+      const response = await fetch(Constants.API_URL, requestJson);
+      const cardDetails = await response.json();
+      console.log('UPdate', cardDetails);
+      dispatch(updateCardDetails(cardDetails))
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
+  const getProgressValue = () => {
+    return debitCardDetails && debitCardDetails.weekly_limit / debitCardDetails.max_limit; 
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,14 +107,8 @@ useEffect(() => {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContainerView}
         >
-          <View style={styles.contentView}>
-            <CardView
-              cardHolderName={debitCardDetails.card_holder_name}
-              cardCVV={debitCardDetails.cvv}
-              cardNumber={debitCardDetails.card_number}
-              cardType={debitCardDetails.card_type}
-              cardValidity={debitCardDetails.validity}
-            />
+          <View 
+          style={styles.contentView}>
             {
               debitCardDetails && debitCardDetails.set_weekly_limit &&
               <View
@@ -81,10 +123,12 @@ useEffect(() => {
                 <ProgressBar
                   style={styles.progressBar}
                   color={'#01D167'}
-                  progress={0.4}
+                  progress={getProgressValue()}
                   width={windowWidth * 0.9}
                   borderRadius={7}
-                  height={15}
+                  borderWidth={0}
+                  unfilledColor = {'#E5FAF0'}
+                  height={14}
                 />
               </View>
             }
@@ -109,7 +153,6 @@ useEffect(() => {
                 <Text style={styles.weeklyLimitTitle}>Weekly spending limit</Text>
                 <Text style={styles.descriptionLabel}>You haven’t set any spending limit on card</Text>
               </View>
-
               <Switch
                 style={styles.switch}
                 trackColor={{ false: "#01D167", true: "#01D167" }}
@@ -152,6 +195,13 @@ useEffect(() => {
               </View>
             </View>
           </View>
+          <CardView
+              cardHolderName={debitCardDetails.card_holder_name}
+              cardCVV={debitCardDetails.cvv}
+              cardNumber={debitCardDetails.card_number}
+              cardType={debitCardDetails.card_type}
+              cardValidity={debitCardDetails.validity}
+            />
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -163,7 +213,6 @@ export default DebitCardScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#0C365A'
   },
@@ -182,14 +231,16 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollView: {
-    top: -185,
+    top: -185//-windowHeight * 0.27,//-185,
+    // backgroundColor:'red'
   },
   scrollContainerView: {
     backgroundColor: 'transparent',
     width: '100%',
+    paddingTop: 250//windowHeight * 0.35//250
   },
   contentView: {
-    marginTop: 250,
+    paddingTop: 160,// windowHeight * 0.22,//160,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     backgroundColor: '#fff',
@@ -197,7 +248,8 @@ const styles = StyleSheet.create({
   progressWrapperView: {
     justifyContent: 'center',
     marginTop: 20,
-    marginBottom: 10
+    marginBottom: 10,
+    // width: windowWidth * 0.95
   },
   progressTitleLabelWrapper: {
     justifyContent: 'space-between',
@@ -276,8 +328,9 @@ const styles = StyleSheet.create({
   optionsRowWrapper: {
     flexDirection: 'row',
     marginHorizontal: 20,
-    marginTop: 0,
+    marginTop: 10,
     alignItems: 'center',
+    
   },
   optionImage: {
     width: 30,
@@ -287,12 +340,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     width: '75%',
     marginVertical: 5,
-    marginBottom: 20
-  }, 
-  topMargin:{
+    marginBottom:10,
+    alignSelf:'center'
+  },
+  topMargin: {
     marginTop: 20
-  }, 
-  bottomMargin:{
+  },
+  bottomMargin: {
     marginBottom: 20
   }
 });

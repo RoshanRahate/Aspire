@@ -7,35 +7,26 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
 import {
   StyleSheet,
 } from 'react-native';
+
+import { configureStore } from "@reduxjs/toolkit";
+import { Provider } from "react-redux";
+import rootReducer from "./src/reducers";
 import { RootNavigator } from './src/navigator/RootNavigator';
 
-const App: () => Node = () => {
+const store = configureStore({
+  reducer: rootReducer,
+});
+
+
+const App: () => JSX.Element = () => {
   return (
-    <RootNavigator/>
+    <Provider store={store}>
+      <RootNavigator />
+    </Provider>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;

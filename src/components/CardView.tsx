@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Dimensions, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 
+const windowHeight = Dimensions.get('window').height;
 interface CardViewProps {
     cardHolderName: String,
     cardNumber: String
@@ -57,8 +58,8 @@ const CardView = ({
                     <Text style={styles.cardNumberText}>{cardNumber &&  cardNumber.slice(12, 16)}</Text>
                 </View>
                 <View style={styles.expiryAndCVV}>
-                    <Text style={styles.cardNumberText}>{`Thru: ${ cardValidity && cardValidity}`}</Text>
-                    <Text style={styles.cardNumberText}>{`CVV: ${hidden ? '***' : cardCVV && cardCVV}`}</Text>
+                    <Text style={styles.cardNumberText}>{cardValidity &&`Thru: ${ cardValidity}`}</Text>
+                    <Text style={styles.cardNumberText}>{cardCVV && `CVV: ${hidden ? '***' : cardCVV}`}</Text>
                 </View>
                 <View style={styles.visaImageView}>
                     <Image
@@ -79,8 +80,8 @@ const styles = StyleSheet.create({
         // flex: 1,
         width: '90%',
         alignSelf: 'center',
-        // position: 'absolute',
-        marginTop: -100
+        position: 'absolute',
+        marginTop: 150//windowHeight * 0.21//140
     },
     cardView: {
         backgroundColor: '#01D167',
@@ -100,28 +101,29 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 10,
         height: 45,
-        bottom: -12
+        bottom: -12,
+        marginRight: 1
     },
     hideContentsView: {
         alignItems: 'center',
         flexDirection: 'row',
-        marginBottom: 12
+        marginBottom: 12,
     },
-    eyeImage: { width: 20, height: 20 },
+    eyeImage: { 
+        width: 22,
+         height: 22 
+        },
     hideText: {
         fontSize: 13,
         fontWeight: 'bold',
         color: '#01D167',
         paddingLeft: 10
     },
-    aspireText: {
-        fontSize: 20,
-        fontWeight: '500',
-    },
     cardHolderName: {
         fontSize: 22,
         fontWeight: 'bold',
-        margin: 20,
+        marginHorizontal: 20,
+        marginBottom: 20,
         color: '#FFFFFF',
         fontFamily: 'Avenir Next'
     },

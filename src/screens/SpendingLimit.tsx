@@ -1,5 +1,17 @@
 import React, { useState, } from 'react';
-import { Image, View, StyleSheet, Text, SafeAreaView, TextInput, TouchableOpacity , Keyboard, TouchableWithoutFeedback} from 'react-native';
+import {
+    Image,
+    View,
+    StyleSheet,
+    Text,
+    SafeAreaView,
+    TextInput,
+    TouchableOpacity,
+    Keyboard,
+    TouchableWithoutFeedback
+} from 'react-native';
+import { useSelector, useDispatch } from "react-redux";
+import { setCardDetails, updateCardDetails } from '../reducers/uiReducer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDebitCardDetails } from '../hooks/useDebitCardDetails';
 import { currencyFormatter } from '../utility';
@@ -7,74 +19,100 @@ import Constants from '../utility/Constants';
 
 interface SpendingLimitScreenProps { }
 
-const SpendingLimitScreen = ({navigation, route: {params}}) => {
+const SpendingLimitScreen = ({ navigation, route: { params } }) => {
 
+    const dispatch = useDispatch();
+    
+    const debitCardDetails = useSelector(
+        (state) => state.ui.debitCardDetails
+    )
     const [amount, setAmount] = useState(Constants.suggestedLimits[0]);
-    const { updateSpendingLimit } = useDebitCardDetails();
+    
+    const updateSpendingLimit = async (isEnabled, amount) => {
+        let updatedDetails = Object.assign({}, debitCardDetails);
+        updatedDetails.weekly_limit = amount;
+        updatedDetails.set_weekly_limit = isEnabled;
+        const requestJson = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedDetails)
+        };
+        try {
+            const response = await fetch(Constants.API_URL, requestJson);
+            const cardDetails = await response.json();
+            console.log('UPdate', cardDetails);
+            dispatch(updateCardDetails(cardDetails))
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const onAmountChange = (event) => {
-        let amount = event.nativeEvent.text.trim();
+        let amount = event.nativeEvent.text.trim().replace(/\,/g, '');
         setAmount(currencyFormatter(amount));
     }
     return (
         <SafeAreaView style={styles.container}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
-            <View style={styles.wrapperView}>
-                <View style={styles.navigationView}>
-                    <TouchableOpacity onPress={navigation.goBack}>
-                        <Icon color={'#fff'} size={30} name={'keyboard-arrow-left'} />
-                    </TouchableOpacity>
-                    <Image
-                        resizeMode={"contain"}
-                        style={styles.rightLogo}
-                        source={require('../assets/Logo.png')}
-                    />
-                </View>
-                <Text style={styles.debitText}>Spending Limit</Text>
-
-                <View style={styles.setLimitView}>
-                    <View style={styles.meterIconView}>
+                <View style={styles.wrapperView}>
+                    <View style={styles.navigationView}>
+                        <TouchableOpacity onPress={navigation.goBack}>
+                            <Icon color={'#fff'} size={30} name={'keyboard-arrow-left'} />
+                        </TouchableOpacity>
                         <Image
                             resizeMode={"contain"}
-                            style={styles.meterIcon}
-                            source={require('../assets/limit_mark.png')}
+                            style={styles.rightLogo}
+                            source={require('../assets/Logo.png')}
                         />
-                        <Text style={styles.spendingLimitText}>Set a weekly debit card spending limit</Text>
                     </View>
-                    <View style={styles.amountView}>
-                        <View style={styles.currencyView}>
-                            <Text style={styles.currencyText}>S$</Text>
-                        </View>
-                        <TextInput
-                        autoFocus
-                            keyboardType='number-pad'
-                            value={currencyFormatter(amount.toString())}
-                            onChange={onAmountChange}
-                            style={styles.amountText}></TextInput>
-                    </View>
-                    <View style={styles.separator} />
+                    <Text style={styles.debitText}>Spending Limit</Text>
 
-                    <Text style={styles.descriptionText}>Here weekly means the last 7 days - not the calendar week</Text>
-                    <View style={styles.amountSelectionView}>
-                        {
-                            Constants.suggestedLimits.map((value, index) =>
-                                <TouchableOpacity
-                                    key= {index}
-                                    style={styles.amountSelectionButton}
-                                    onPress={() => setAmount(value)}>
-                                    <Text style={styles.amountValue}>S$ {currencyFormatter(value)}</Text>
-                                </TouchableOpacity>
-                            )
-                        }
+                    <View style={styles.setLimitView}>
+                        <View style={styles.meterIconView}>
+                            <Image
+                                resizeMode={"contain"}
+                                style={styles.meterIcon}
+                                source={require('../assets/limit_mark.png')}
+                            />
+                            <Text style={styles.spendingLimitText}>Set a weekly debit card spending limit</Text>
+                        </View>
+                        <View style={styles.amountView}>
+                            <View style={styles.currencyView}>
+                                <Text style={styles.currencyText}>S$</Text>
+                            </View>
+                            <TextInput
+                                autoFocus
+                                keyboardType='number-pad'
+                                value={currencyFormatter(amount.toString())}
+                                onChange={onAmountChange}
+                                style={styles.amountText}></TextInput>
+                        </View>
+                        <View style={styles.separator} />
+
+                        <Text style={styles.descriptionText}>Here weekly means the last 7 days - not the calendar week</Text>
+                        <View style={styles.amountSelectionView}>
+                            {
+                                Constants.suggestedLimits.map((value, index) =>
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.amountSelectionButton}
+                                        onPress={() => setAmount(value)}>
+                                        <Text style={styles.amountValue}>S$ {currencyFormatter(value)}</Text>
+                                    </TouchableOpacity>
+                                )
+                            }
+                        </View>
+                        <TouchableOpacity
+                            style={styles.saveButton}
+                            onPress={() => {
+                                updateSpendingLimit(true, amount)
+                                navigation.goBack()
+                            }}>
+                            <Text style={styles.saveButtonText}>Save</Text>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                        style={styles.saveButton}
-                        onPress={() => updateSpendingLimit(true, amount)}>
-                        <Text style={styles.saveButtonText}>Save</Text>
-                    </TouchableOpacity>
                 </View>
-            </View>
             </TouchableWithoutFeedback>
         </SafeAreaView>
 
