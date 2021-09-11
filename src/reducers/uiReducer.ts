@@ -23,7 +23,7 @@ const initialState = {
     available_balance: "",
     weekly_limit: 0,
     set_weekly_limit: false
-  }
+  } as DebitCardDetails
 };
 
 const uiSlice = createSlice({

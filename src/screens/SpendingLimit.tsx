@@ -11,13 +11,10 @@ import {
     TouchableWithoutFeedback
 } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
-import { setCardDetails, updateCardDetails } from '../reducers/uiReducer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useDebitCardDetails } from '../hooks/useDebitCardDetails';
-import { currencyFormatter } from '../utility';
+import { updateCardDetails } from '../reducers/uiReducer';
+import { currencyFormatter, updateCardSpendingLimit } from '../utility';
 import Constants from '../utility/Constants';
-
-interface SpendingLimitScreenProps { }
 
 const SpendingLimitScreen = ({ navigation, route: { params } }) => {
 
@@ -29,22 +26,13 @@ const SpendingLimitScreen = ({ navigation, route: { params } }) => {
     const [amount, setAmount] = useState(Constants.suggestedLimits[0]);
     
     const updateSpendingLimit = async (isEnabled, amount) => {
-        let updatedDetails = Object.assign({}, debitCardDetails);
-        updatedDetails.weekly_limit = amount;
-        updatedDetails.set_weekly_limit = isEnabled;
-        const requestJson = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedDetails)
-        };
-        try {
-            const response = await fetch(Constants.API_URL, requestJson);
-            const cardDetails = await response.json();
-            console.log('UPdate', cardDetails);
-            dispatch(updateCardDetails(cardDetails))
-        } catch (error) {
-            console.log(error);
-        }
+        updateCardSpendingLimit(debitCardDetails, isEnabled, amount)
+        .then((details) => {
+          dispatch(updateCardDetails(details));
+        })
+        .catch(e => {
+          console.log("error", e)
+        });
     }
 
     const onAmountChange = (event) => {

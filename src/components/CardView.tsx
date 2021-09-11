@@ -36,7 +36,7 @@ const CardView = ({
                         source={hidden ? require('../assets/show_eye.png') : require('../assets/eye_closed.png')}
                     >
                     </Image>
-                    <Text style={styles.hideText}>Hide card number</Text>
+                    <Text style={styles.hideText}>{hidden ? 'Show card number' : 'Hide card number'}</Text>
                 </View>
             </TouchableOpacity>
 

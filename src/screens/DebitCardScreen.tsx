@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, SafeAreaView, ScrollView, Image, Switch, Dimensions, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
-import { setCardDetails, updateCardDetails } from '../reducers/uiReducer';
-
-import CardView from '../components/CardView';
 import ProgressBar from 'react-native-progress/Bar';
+import { setCardDetails, updateCardDetails } from '../reducers/uiReducer';
+import CardView from '../components/CardView';
 import { currencyFormatter } from '../utility';
-import Constants from '../utility/Constants';
 
 const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
-import { updateCardSpendingLimit } from '../utility';
+import { updateCardSpendingLimit, getDebitCardDetails } from '../utility';
 
 const DebitCardScreen = ({ navigation }) => {
 
@@ -23,22 +20,14 @@ const DebitCardScreen = ({ navigation }) => {
 
   useEffect(() => {
     console.log("useDebitCardDetails called ");
-    const getDebitCardDetails = async () => {
-      try {
-        const result = await fetch(Constants.API_URL);
-        const cardDetails = await result.json();
-        console.log(result)
-        dispatch(setCardDetails(cardDetails))
-      } catch (error) {
-        console.log(error);
-      }
-    };
 
-    getDebitCardDetails();
+    getDebitCardDetails().then((result)=> {
+      dispatch(setCardDetails(result))
+    })
+    .catch(e => {
+      console.log(e)
+    })
   }, []);
-
-  const[data, setData] = useState({});
-  // const { updateSpendingLimit } = useDebitCardDetails();
   
   const toggleSwitch = (enabled) => {
 
@@ -49,33 +38,15 @@ const DebitCardScreen = ({ navigation }) => {
     }
   }
 
-
   const updateSpendingLimit = async(isEnabled, amount) => {
-      //   updateCardSpendingLimit(isEnabled, amount)
-      // .then((details) => {
-      //   console.log("inside --", details);
-      //   useEffect(() => {
-      //     dispatch(updateCardDetails(details));
-      //   }, [])
-      // })
-      // .catch(e => console.log(e));
-  
-    let updatedDetails = Object.assign({}, debitCardDetails);
-    updatedDetails.weekly_limit = amount;
-    updatedDetails.set_weekly_limit = isEnabled;
-    const requestJson = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedDetails)
-    };
-    try {
-      const response = await fetch(Constants.API_URL, requestJson);
-      const cardDetails = await response.json();
-      console.log('UPdate', cardDetails);
-      dispatch(updateCardDetails(cardDetails))
-    } catch (error) {
-      console.log(error);
-    }
+    updateCardSpendingLimit(debitCardDetails, isEnabled, amount)
+      .then((details) => {
+        console.log("inside --", details);
+        dispatch(updateCardDetails(details));
+      })
+      .catch(e => {
+        console.log("error", e)
+      });
   }
 
   const getProgressValue = () => {
