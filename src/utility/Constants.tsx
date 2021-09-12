@@ -4,7 +4,8 @@ export default {
   suggestedLimits: [5000, 10000, 20000],
 
   //String constants
-  check_network_connection: "Something went wrong. Kindly check your network connection and try again.",
+  check_network_connection:
+    'Something went wrong. Kindly check your network connection and try again.',
   //Debit Card screen
   debit_card_label: 'Debit Card',
   available_balance: 'Available balance',
@@ -30,7 +31,7 @@ export default {
     'Here weekly means the last 7 days - not the calendar week',
   save_button_title: 'SAVE',
   currency: 'S$',
-  enter_valid_spending_limit: "Enter valid spending limit"
+  enter_valid_spending_limit: 'Enter valid spending limit',
 };
 
 export enum AVAILABLE_ROUTES {

@@ -31,7 +31,7 @@ const SpendingLimitScreen = ({navigation}) => {
       );
       dispatch(updateCardDetails(updatedCardDetails));
     } catch (e) {
-      Alert.alert(Constants.check_network_connection)
+      Alert.alert(Constants.check_network_connection);
     }
   };
 
@@ -110,9 +110,8 @@ const SpendingLimitScreen = ({navigation}) => {
                     );
                     navigation.goBack();
                   } else {
-                    Alert.alert(Constants.enter_valid_spending_limit)
+                    Alert.alert(Constants.enter_valid_spending_limit);
                   }
-                  
                 }}>
                 <Text style={styles.saveButtonText}>
                   {Constants.save_button_title}
