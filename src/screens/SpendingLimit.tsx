@@ -16,23 +16,23 @@ import { updateCardDetails } from '../reducers/uiReducer';
 import { currencyFormatter, updateCardSpendingLimit } from '../utility';
 import Constants from '../utility/Constants';
 
-const SpendingLimitScreen = ({ navigation, route: { params } }) => {
+const SpendingLimitScreen = ({ navigation }) => {
 
     const dispatch = useDispatch();
-    
+
     const debitCardDetails = useSelector(
         (state) => state.ui.debitCardDetails
     )
     const [amount, setAmount] = useState(Constants.suggestedLimits[0]);
-    
+
     const updateSpendingLimit = async (isEnabled, amount) => {
         updateCardSpendingLimit(debitCardDetails, isEnabled, amount)
-        .then((details) => {
-          dispatch(updateCardDetails(details));
-        })
-        .catch(e => {
-          console.log("error", e)
-        });
+            .then((details) => {
+                dispatch(updateCardDetails(details));
+            })
+            .catch(e => {
+                console.log("error", e)
+            });
     }
 
     const onAmountChange = (event) => {
@@ -54,51 +54,55 @@ const SpendingLimitScreen = ({ navigation, route: { params } }) => {
                             source={require('../assets/Logo.png')}
                         />
                     </View>
-                    <Text style={styles.debitText}>Spending Limit</Text>
+                    <Text style={styles.debitText}>{Constants.spending_limit_title}</Text>
 
-                    <View style={styles.setLimitView}>
-                        <View style={styles.meterIconView}>
-                            <Image
-                                resizeMode={"contain"}
-                                style={styles.meterIcon}
-                                source={require('../assets/limit_mark.png')}
-                            />
-                            <Text style={styles.spendingLimitText}>Set a weekly debit card spending limit</Text>
-                        </View>
-                        <View style={styles.amountView}>
-                            <View style={styles.currencyView}>
-                                <Text style={styles.currencyText}>S$</Text>
+                    <View style={styles.roundedViewWrapper}>
+                        <View style={styles.setLimitView}>
+                            <View >
+                                <View style={styles.meterIconView}>
+                                    <Image
+                                        resizeMode={"contain"}
+                                        style={styles.meterIcon}
+                                        source={require('../assets/limit_mark.png')}
+                                    />
+                                    <Text style={styles.spendingLimitText}>{Constants.set_weekly_debit_limit}</Text>
+                                </View>
+                                <View style={styles.amountView}>
+                                    <View style={styles.currencyView}>
+                                        <Text style={styles.currencyText}>{Constants.currency}</Text>
+                                    </View>
+                                    <TextInput
+                                        autoFocus
+                                        keyboardType='number-pad'
+                                        value={currencyFormatter(amount.toString())}
+                                        onChange={onAmountChange}
+                                        style={styles.amountText}></TextInput>
+                                </View>
+                                <View style={styles.separator} />
+
+                                <Text style={styles.descriptionText}>{Constants.here_weekly_means_text}</Text>
+                                <View style={styles.amountSelectionView}>
+                                    {
+                                        Constants.suggestedLimits.map((value, index) =>
+                                            <TouchableOpacity
+                                                key={index}
+                                                style={styles.amountSelectionButton}
+                                                onPress={() => setAmount(value)}>
+                                                <Text style={styles.amountValue}>{Constants.currency} {currencyFormatter(value)}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    }
+                                </View>
                             </View>
-                            <TextInput
-                                autoFocus
-                                keyboardType='number-pad'
-                                value={currencyFormatter(amount.toString())}
-                                onChange={onAmountChange}
-                                style={styles.amountText}></TextInput>
+                            <TouchableOpacity
+                                style={styles.saveButton}
+                                onPress={() => {
+                                    updateSpendingLimit(true, amount.toString().replace(/\,/g, ''))
+                                    navigation.goBack()
+                                }}>
+                                <Text style={styles.saveButtonText}>{Constants.save_button_title}</Text>
+                            </TouchableOpacity>
                         </View>
-                        <View style={styles.separator} />
-
-                        <Text style={styles.descriptionText}>Here weekly means the last 7 days - not the calendar week</Text>
-                        <View style={styles.amountSelectionView}>
-                            {
-                                Constants.suggestedLimits.map((value, index) =>
-                                    <TouchableOpacity
-                                        key={index}
-                                        style={styles.amountSelectionButton}
-                                        onPress={() => setAmount(value)}>
-                                        <Text style={styles.amountValue}>S$ {currencyFormatter(value)}</Text>
-                                    </TouchableOpacity>
-                                )
-                            }
-                        </View>
-                        <TouchableOpacity
-                            style={styles.saveButton}
-                            onPress={() => {
-                                updateSpendingLimit(true, amount)
-                                navigation.goBack()
-                            }}>
-                            <Text style={styles.saveButtonText}>Save</Text>
-                        </TouchableOpacity>
                     </View>
                 </View>
             </TouchableWithoutFeedback>
@@ -116,16 +120,24 @@ const styles = StyleSheet.create({
         backgroundColor: '#0C365A'
     },
     wrapperView: {
-        width: '100%'
+        width: '100%',
+        flex: 1,
+    },
+    roundedViewWrapper: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: 'stretch'
     },
     navigationView: {
+        marginTop: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginHorizontal: 20
     },
     rightLogo: {
         width: 25,
-        height: 25, marginTop: 10
+        height: 25,
     },
     spendingLimitText: {
         color: '#222222',
@@ -143,9 +155,11 @@ const styles = StyleSheet.create({
     },
     setLimitView: {
         backgroundColor: '#fff',
-        height: '85%',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
         borderTopRightRadius: 24,
-        borderTopLeftRadius: 24
+        borderTopLeftRadius: 24,
+        flexGrow: 1
     },
     meterIconView: {
         margin: 20,
@@ -187,16 +201,16 @@ const styles = StyleSheet.create({
         width: '90%'
     },
     saveButton: {
-        position: 'absolute',
-        bottom: 80,
         alignSelf: 'center',
         backgroundColor: '#01D167',
         width: 200,
         paddingHorizontal: 40,
         paddingVertical: 8,
         borderRadius: 20,
+        marginVertical: 20,
     },
     saveButtonText: {
+
         textAlign: 'center',
         padding: 5,
         fontSize: 16,
@@ -210,13 +224,11 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap'
     },
     amountSelectionButton: {
-        // backgroundColor: '#01D167',
         paddingHorizontal: 10,
         paddingVertical: 8,
         marginTop: 10,
         borderRadius: 4,
         alignItems: 'center',
-        // opacity:0.5,
         backgroundColor: 'rgba(1,209,103,0.6)'
     },
     amountValue: {

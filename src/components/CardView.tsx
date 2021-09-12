@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Dimensions, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import Constants from '../utility/Constants';
 
 const windowHeight = Dimensions.get('window').height;
 interface CardViewProps {
@@ -36,7 +37,7 @@ const CardView = ({
                         source={hidden ? require('../assets/show_eye.png') : require('../assets/eye_closed.png')}
                     >
                     </Image>
-                    <Text style={styles.hideText}>{hidden ? 'Show card number' : 'Hide card number'}</Text>
+                    <Text style={styles.hideText}>{hidden ? Constants.show_card_number : Constants.hide_card_number}</Text>
                 </View>
             </TouchableOpacity>
 

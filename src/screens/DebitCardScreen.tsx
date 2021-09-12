@@ -9,11 +9,12 @@ import { currencyFormatter } from '../utility';
 const windowWidth = Dimensions.get('window').width;
 
 import { updateCardSpendingLimit, getDebitCardDetails } from '../utility';
+import Constants from '../utility/Constants';
 
 const DebitCardScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
-  
+
   const debitCardDetails = useSelector(
     (state) => state.ui.debitCardDetails
   )
@@ -21,16 +22,15 @@ const DebitCardScreen = ({ navigation }) => {
   useEffect(() => {
     console.log("useDebitCardDetails called ");
 
-    getDebitCardDetails().then((result)=> {
+    getDebitCardDetails().then((result) => {
       dispatch(setCardDetails(result))
     })
-    .catch(e => {
-      console.log(e)
-    })
+      .catch(e => {
+        console.log(e)
+      })
   }, []);
-  
-  const toggleSwitch = (enabled) => {
 
+  const toggleSwitch = (enabled) => {
     if (enabled) {
       navigation.navigate('SpendingLimitScreen', debitCardDetails);
     } else {
@@ -38,10 +38,9 @@ const DebitCardScreen = ({ navigation }) => {
     }
   }
 
-  const updateSpendingLimit = async(isEnabled, amount) => {
+  const updateSpendingLimit = async (isEnabled, amount) => {
     updateCardSpendingLimit(debitCardDetails, isEnabled, amount)
       .then((details) => {
-        console.log("inside --", details);
         dispatch(updateCardDetails(details));
       })
       .catch(e => {
@@ -50,7 +49,7 @@ const DebitCardScreen = ({ navigation }) => {
   }
 
   const getProgressValue = () => {
-    return debitCardDetails && debitCardDetails.weekly_limit / debitCardDetails.max_limit; 
+    return Math.min(debitCardDetails && debitCardDetails.weekly_limit / debitCardDetails.max_limit, 1);
   }
 
   return (
@@ -65,11 +64,11 @@ const DebitCardScreen = ({ navigation }) => {
       </View>
       <View style={styles.topStaticWrapper}>
         <Text
-          style={styles.debitText}>Debit Card</Text>
-        <Text style={styles.availableBalance}>Available balance</Text>
+          style={styles.debitText}>{Constants.debit_card_label}</Text>
+        <Text style={styles.availableBalance}>{Constants.available_balance}</Text>
         <View style={styles.amountView}>
           <View style={styles.currencyView}>
-            <Text style={styles.currencyText}>S$</Text>
+            <Text style={styles.currencyText}>{Constants.currency}</Text>
           </View>
           <Text style={styles.amountText}>{debitCardDetails && debitCardDetails.available_balance && currencyFormatter(debitCardDetails.available_balance)}</Text>
         </View>
@@ -78,17 +77,17 @@ const DebitCardScreen = ({ navigation }) => {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContainerView}
         >
-          <View 
-          style={styles.contentView}>
+          <View
+            style={styles.contentView}>
             {
               debitCardDetails && debitCardDetails.set_weekly_limit &&
               <View
                 style={styles.progressWrapperView}>
                 <View style={styles.progressTitleLabelWrapper}>
-                  <Text style={styles.rowTitleText}>Debit card spending limit</Text>
+                  <Text style={styles.rowTitleText}>{Constants.debit_card_spending_limit}</Text>
                   <View style={styles.progressDataWrapper}>
-                    <Text style={styles.setLimitLabel}>${debitCardDetails.weekly_limit} </Text>
-                    <Text style={styles.maxLimitLabel}>| ${debitCardDetails.max_limit}</Text>
+                    <Text style={styles.setLimitLabel}>${debitCardDetails.weekly_limit && currencyFormatter(debitCardDetails.weekly_limit)} </Text>
+                    <Text style={styles.maxLimitLabel}>| ${ debitCardDetails.max_limit && currencyFormatter(debitCardDetails.max_limit)}</Text>
                   </View>
                 </View>
                 <ProgressBar
@@ -98,7 +97,7 @@ const DebitCardScreen = ({ navigation }) => {
                   width={windowWidth * 0.9}
                   borderRadius={7}
                   borderWidth={0}
-                  unfilledColor = {'#E5FAF0'}
+                  unfilledColor={'#E5FAF0'}
                   height={14}
                 />
               </View>
@@ -110,8 +109,8 @@ const DebitCardScreen = ({ navigation }) => {
                 source={require('../assets/insight.png')}
               />
               <View style={[styles.rowTextWrapper, styles.topMargin]}>
-                <Text style={styles.weeklyLimitTitle}>Top-up account</Text>
-                <Text style={styles.descriptionLabel}>Deposit money to your account to use with card</Text>
+                <Text style={styles.weeklyLimitTitle}>{Constants.top_up_account}</Text>
+                <Text style={styles.descriptionLabel}>{Constants.deposit_money_to_your_account}</Text>
               </View>
             </View>
             <View style={styles.optionsRowWrapper}>
@@ -121,8 +120,8 @@ const DebitCardScreen = ({ navigation }) => {
                 source={require('../assets/Transfer_limit.png')}
               />
               <View style={styles.rowTextWrapper}>
-                <Text style={styles.weeklyLimitTitle}>Weekly spending limit</Text>
-                <Text style={styles.descriptionLabel}>You haven’t set any spending limit on card</Text>
+                <Text style={styles.weeklyLimitTitle}>{Constants.weekly_spending_limit}</Text>
+                <Text style={styles.descriptionLabel}>{Constants.you_havent_set_limit}</Text>
               </View>
               <Switch
                 style={styles.switch}
@@ -139,8 +138,8 @@ const DebitCardScreen = ({ navigation }) => {
                 source={require('../assets/insight.png')}
               />
               <View style={styles.rowTextWrapper}>
-                <Text style={styles.weeklyLimitTitle}>Get a new card</Text>
-                <Text style={styles.descriptionLabel}>This deactivates your current debit card</Text>
+                <Text style={styles.weeklyLimitTitle}>{Constants.get_a_new_card}</Text>
+                <Text style={styles.descriptionLabel}>{Constants.this_deactivates_your_debit_card}</Text>
               </View>
             </View>
             <View style={styles.optionsRowWrapper}>
@@ -150,8 +149,8 @@ const DebitCardScreen = ({ navigation }) => {
                 source={require('../assets/Transfer_limit.png')}
               />
               <View style={styles.rowTextWrapper}>
-                <Text style={styles.weeklyLimitTitle}>Deactivated Cards</Text>
-                <Text style={styles.descriptionLabel}>Your previously deactivated cards</Text>
+                <Text style={styles.weeklyLimitTitle}>{Constants.deactivated_cards}</Text>
+                <Text style={styles.descriptionLabel}>{Constants.your_previously_deactivated_cards}</Text>
               </View>
             </View>
             <View style={styles.optionsRowWrapper}>
@@ -161,18 +160,18 @@ const DebitCardScreen = ({ navigation }) => {
                 source={require('../assets/insight.png')}
               />
               <View style={[styles.rowTextWrapper, styles.bottomMargin]}>
-                <Text style={styles.weeklyLimitTitle}>Freeze Card</Text>
-                <Text style={styles.descriptionLabel}>Your previously deactivated cards</Text>
+                <Text style={styles.weeklyLimitTitle}>{Constants.freeze_cards}</Text>
+                <Text style={styles.descriptionLabel}>{Constants.your_card_is_currently_active}</Text>
               </View>
             </View>
           </View>
           <CardView
-              cardHolderName={debitCardDetails.card_holder_name}
-              cardCVV={debitCardDetails.cvv}
-              cardNumber={debitCardDetails.card_number}
-              cardType={debitCardDetails.card_type}
-              cardValidity={debitCardDetails.validity}
-            />
+            cardHolderName={debitCardDetails.card_holder_name}
+            cardCVV={debitCardDetails.cvv}
+            cardNumber={debitCardDetails.card_number}
+            cardType={debitCardDetails.card_type}
+            cardValidity={debitCardDetails.validity}
+          />
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -301,7 +300,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 10,
     alignItems: 'center',
-    
+
   },
   optionImage: {
     width: 30,
@@ -311,8 +310,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     width: '75%',
     marginVertical: 5,
-    marginBottom:10,
-    alignSelf:'center'
+    marginBottom: 10,
+    alignSelf: 'center'
   },
   topMargin: {
     marginTop: 20
