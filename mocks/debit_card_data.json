@@ -1,0 +1,13 @@
+{
+  "debit_card": {
+    "card_number": "1234567890123456",
+    "card_type": "visa",
+    "card_holder_name": "Mark Henry",
+    "validity": "12/20",
+    "cvv": "435",
+    "max_limit": 100000,
+    "available_balance": 60000,
+    "weekly_limit": "20000",
+    "set_weekly_limit": true
+  }
+}
