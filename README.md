@@ -10,11 +10,13 @@ This app contains Debit Card Details screen and Spending Limits screen to change
 Debit Card screen should show the Debit card details for the user. Available balance should be displayed on the screen.
 For Debit Card details User can Hide/Show the card number and CVV using the Hide/Show card Number.
 
-Debit Card spending Limit and max limit should be displayed with progress bar when user enables the Weekly spending limit. 
+Debit Card spending Limit and max limit should be displayed with progress bar when user enables the Weekly spending limit.
+
+Weekly spending limit option navigates to Spending limit screen to set limit. Other options provided are static.
 
 ### Set Weekly Spending Limit
 
-When Enabled the Weekly Spending limit on Debit card screen, User should navigate to Spending Limit screen when he/she can set the Weekly spending limit.
+When Enabled the Weekly spending limit on Debit card screen, User should navigate to Spending Limit screen when he/she can set the Weekly spending limit.
 
 Auto suggested spending limits will be populated to select the spending limit. User can also enter the weekly limit amount manually.
 
@@ -36,7 +38,8 @@ On SAVE button user should navigate to the Debit card screen. Updated spending l
 - To build on Android 
     1. Go to root directory ```cd AspireTest/```
     2. Start package manger ```$ yarn start```
-    2. ```$react-native run-android```
+    3. We are using the local server endpoint, to connect to local server on android device or emulator use command  ```adb -s <emulator_name> reverse tcp:3000 tcp:3000``` 
+    4. ```$react-native run-android```
 
 ## Pending Tasks
 
