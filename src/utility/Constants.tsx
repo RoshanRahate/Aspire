@@ -29,5 +29,13 @@ export default {
     here_weekly_means_text: "Here weekly means the last 7 days - not the calendar week",
     save_button_title:"SAVE", 
     currency:"S$"
-
 }
+
+
+export enum AVAILABLE_ROUTES {
+    DEBIT_CARD = "Debit Card",
+    SPENDING_LIMIT_SCREEN = "Spending Limit Screen",
+    PROFILE = "Profile",
+    HOME= "Home"
+}
+  

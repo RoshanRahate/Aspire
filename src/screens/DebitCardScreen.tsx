@@ -5,11 +5,10 @@ import ProgressBar from 'react-native-progress/Bar';
 import { setCardDetails, updateCardDetails } from '../reducers/uiReducer';
 import CardView from '../components/CardView';
 import { currencyFormatter } from '../utility';
-
 const windowWidth = Dimensions.get('window').width;
 
 import { updateCardSpendingLimit, getDebitCardDetails } from '../utility';
-import Constants from '../utility/Constants';
+import Constants, { AVAILABLE_ROUTES } from '../utility/Constants';
 
 const DebitCardScreen = ({ navigation }) => {
 
@@ -32,7 +31,7 @@ const DebitCardScreen = ({ navigation }) => {
 
   const toggleSwitch = (enabled) => {
     if (enabled) {
-      navigation.navigate('SpendingLimitScreen', debitCardDetails);
+      navigation.navigate(AVAILABLE_ROUTES.SPENDING_LIMIT_SCREEN, debitCardDetails);
     } else {
       updateSpendingLimit(false, 0);
     }

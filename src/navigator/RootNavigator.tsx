@@ -7,34 +7,31 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import DebitCardScreen from '../screens/DebitCardScreen';
 import SettingsScreen from '../screens/ProfileScreen';
 import SpendingLimitScreen from '../screens/SpendingLimit';
+import { AVAILABLE_ROUTES } from '../utility/Constants';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function DebitStack() {
   return (
     <Tab.Navigator
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-        if (route.name === 'Debit Card') {
-          iconName = focused
-            ? 'card'
-            : 'card-outline';
-        } else if (route.name === 'Profile') {
-          iconName = focused ? 'person' : 'person-outline';
-        }
-
-        // You can return any component that you like here!
-        return <Icon name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: '#01D167',
-      tabBarInactiveTintColor: 'gray',
-    })}
+          if (route.name === AVAILABLE_ROUTES.DEBIT_CARD) {
+            iconName = focused ? 'card' : 'card-outline';
+          } else if (route.name === AVAILABLE_ROUTES.PROFILE) {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#01D167',
+        tabBarInactiveTintColor: 'gray',
+      })}
 
     >
-      <Tab.Screen name="Debit Card" options={{ headerShown: false }} component={DebitCardScreen} />
-      <Tab.Screen name="Profile" options={{ headerShown: false }} component={SettingsScreen} />
+      <Tab.Screen name={AVAILABLE_ROUTES.DEBIT_CARD} options={{ headerShown: false }} component={DebitCardScreen} />
+      <Tab.Screen name={AVAILABLE_ROUTES.PROFILE} options={{ headerShown: false }} component={SettingsScreen} />
     </Tab.Navigator>
   );
 }
@@ -42,8 +39,8 @@ function DebitStack() {
 export const RootNavigator = () => (
   <NavigationContainer>
     <Stack.Navigator>
-      <Stack.Screen name="Home" options={{ headerShown: false }}  component={DebitStack} />
-      <Stack.Screen name="SpendingLimitScreen" options={{ headerShown: false }}  component={SpendingLimitScreen} />
+      <Stack.Screen name={AVAILABLE_ROUTES.HOME} options={{ headerShown: false }} component={DebitStack} />
+      <Stack.Screen name={AVAILABLE_ROUTES.SPENDING_LIMIT_SCREEN} options={{ headerShown: false }} component={SpendingLimitScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 
