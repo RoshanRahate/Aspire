@@ -14,6 +14,16 @@ interface CardViewProps {
   cardType: String;
 }
 
+/**
+ * This component returns the CardView JSX with the details provided by the props 
+ * @param props 
+ * cardHolderName: String; 
+ * cardNumber: String; 
+ * cardValidity: String; 
+ * cardCVV: String;
+ * cardType: String;
+ * @returns JSX
+ */
 const CardView = (props: CardViewProps) => {
   const [hidden, setHidden] = useState(false);
 

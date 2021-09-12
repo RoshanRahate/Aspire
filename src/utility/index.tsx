@@ -1,9 +1,21 @@
 import Constants from './Constants';
 
+/**
+ * Currency formatter with comma separator
+ * @param value - NUmber value
+ * @returns formatted string 
+ */
 export const currencyFormatter = value => {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+/**
+ * To update the spending limit
+ * @param debitCardDetails - current debit card details 
+ * @param isEnabled - set spending limit value 
+ * @param amount - amount value
+ * @returns updated debit card json 
+ */
 export const updateCardSpendingLimit = async (
   debitCardDetails,
   isEnabled,
@@ -25,6 +37,10 @@ export const updateCardSpendingLimit = async (
   }
 };
 
+/**
+ * Get the debit card details from the fetch call
+ * @returns debit card json 
+ */
 export const getDebitCardDetails = async () => {
   try {
     const result = await fetch(Constants.API_URL);

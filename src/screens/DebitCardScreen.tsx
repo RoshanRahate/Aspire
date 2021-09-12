@@ -23,6 +23,12 @@ import Constants, {AVAILABLE_ROUTES} from '../utility/Constants';
 
 const windowWidth = Dimensions.get('window').width;
 
+/**
+ * This represents the Debit card screen, includes the CardView component and
+ * performs operations to get the debit card details and set the card monthly limit 
+ * @param navigation - navigation route
+ * @returns JSX
+ */
 const DebitCardScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const debitCardDetails = useSelector(state => state.debitCardDetails);
