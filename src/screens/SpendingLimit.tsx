@@ -17,22 +17,19 @@ import { currencyFormatter, updateCardSpendingLimit } from '../utility';
 import Constants from '../utility/Constants';
 
 const SpendingLimitScreen = ({ navigation }) => {
-
     const dispatch = useDispatch();
-
     const debitCardDetails = useSelector(
-        (state) => state.ui.debitCardDetails
-    )
+        (state) => state.debitCardDetails
+    );
     const [amount, setAmount] = useState(Constants.suggestedLimits[0]);
 
     const updateSpendingLimit = async (isEnabled, amount) => {
-        updateCardSpendingLimit(debitCardDetails, isEnabled, amount)
-            .then((details) => {
-                dispatch(updateCardDetails(details));
-            })
-            .catch(e => {
-                console.log("error", e)
-            });
+        try {
+            const updatedCardDetails = await updateCardSpendingLimit(debitCardDetails, isEnabled, amount);
+            dispatch(updateCardDetails(updatedCardDetails));
+        } catch (e) {
+            // @TODO - alert
+        }
     }
 
     const onAmountChange = (event) => {
@@ -42,14 +39,13 @@ const SpendingLimitScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-
                 <View style={styles.wrapperView}>
                     <View style={styles.navigationView}>
                         <TouchableOpacity onPress={navigation.goBack}>
                             <Icon color={'#fff'} size={30} name={'keyboard-arrow-left'} />
                         </TouchableOpacity>
                         <Image
-                            resizeMode={"contain"}
+                            resizeMode="contain"
                             style={styles.rightLogo}
                             source={require('../assets/Logo.png')}
                         />

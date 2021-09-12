@@ -7,10 +7,6 @@
  */
 
 import React from 'react';
-import {
-  StyleSheet,
-} from 'react-native';
-
 import { configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import rootReducer from "./src/reducers";
@@ -19,6 +15,7 @@ import { RootNavigator } from './src/navigator/RootNavigator';
 const store = configureStore({
   reducer: rootReducer,
 });
+export type RootState = ReturnType<typeof store.getState>
 
 
 const App: () => JSX.Element = () => {

@@ -2,31 +2,33 @@ import React, { useEffect } from 'react';
 import { View, StyleSheet, Text, SafeAreaView, ScrollView, Image, Switch, Dimensions, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from "react-redux";
 import ProgressBar from 'react-native-progress/Bar';
+import Aspire_Logo_V2 from '../assets/Logo.png';
+import Insight_Logo from '../assets/insight.png';
+import Transfer_Limit_Logo from '../assets/Transfer_limit.png';
 import { setCardDetails, updateCardDetails } from '../reducers/uiReducer';
 import CardView from '../components/CardView';
 import { currencyFormatter } from '../utility';
-const windowWidth = Dimensions.get('window').width;
-
 import { updateCardSpendingLimit, getDebitCardDetails } from '../utility';
 import Constants, { AVAILABLE_ROUTES } from '../utility/Constants';
 
+const windowWidth = Dimensions.get('window').width;
+
 const DebitCardScreen = ({ navigation }) => {
-
   const dispatch = useDispatch();
-
   const debitCardDetails = useSelector(
-    (state) => state.ui.debitCardDetails
-  )
+    (state) => state.debitCardDetails
+  );
 
   useEffect(() => {
-    console.log("useDebitCardDetails called ");
-
-    getDebitCardDetails().then((result) => {
-      dispatch(setCardDetails(result))
-    })
-      .catch(e => {
-        console.log(e)
-      })
+    async function getData() {
+      try {
+        const cardDetails = await getDebitCardDetails();
+        dispatch(setCardDetails(cardDetails))
+      } catch (e) {
+        // TODO - alert
+      }
+    };
+    getData();
   }, []);
 
   const toggleSwitch = (enabled) => {
@@ -38,13 +40,12 @@ const DebitCardScreen = ({ navigation }) => {
   }
 
   const updateSpendingLimit = async (isEnabled, amount) => {
-    updateCardSpendingLimit(debitCardDetails, isEnabled, amount)
-      .then((details) => {
-        dispatch(updateCardDetails(details));
-      })
-      .catch(e => {
-        console.log("error", e)
-      });
+    try {
+      const updatedCardDetails = await updateCardSpendingLimit(debitCardDetails, isEnabled, amount);
+      dispatch(updateCardDetails(updatedCardDetails));
+    } catch (e) {
+      // @TODO  alert.
+    }
   }
 
   const getProgressValue = () => {
@@ -56,9 +57,9 @@ const DebitCardScreen = ({ navigation }) => {
       <View
         style={styles.topLogoWrapper}>
         <Image
-          resizeMode={"contain"}
+          resizeMode="contain"
           style={styles.logoImage}
-          source={require('../assets/Logo.png')}
+          source={Aspire_Logo_V2}
         />
       </View>
       <View style={styles.topStaticWrapper}>
@@ -86,26 +87,26 @@ const DebitCardScreen = ({ navigation }) => {
                   <Text style={styles.rowTitleText}>{Constants.debit_card_spending_limit}</Text>
                   <View style={styles.progressDataWrapper}>
                     <Text style={styles.setLimitLabel}>${debitCardDetails.weekly_limit && currencyFormatter(debitCardDetails.weekly_limit)} </Text>
-                    <Text style={styles.maxLimitLabel}>| ${ debitCardDetails.max_limit && currencyFormatter(debitCardDetails.max_limit)}</Text>
+                    <Text style={styles.maxLimitLabel}>| ${debitCardDetails.max_limit && currencyFormatter(debitCardDetails.max_limit)}</Text>
                   </View>
                 </View>
                 <ProgressBar
                   style={styles.progressBar}
-                  color={'#01D167'}
+                  color="#01D167"
                   progress={getProgressValue()}
                   width={windowWidth * 0.9}
                   borderRadius={7}
                   borderWidth={0}
-                  unfilledColor={'#E5FAF0'}
+                  unfilledColor="#E5FAF0"
                   height={14}
                 />
               </View>
             }
             <View style={styles.optionsRowWrapper}>
               <Image
-                resizeMode={"contain"}
+                resizeMode="contain"
                 style={styles.optionImage}
-                source={require('../assets/insight.png')}
+                source={Insight_Logo}
               />
               <View style={[styles.rowTextWrapper, styles.topMargin]}>
                 <Text style={styles.weeklyLimitTitle}>{Constants.top_up_account}</Text>
@@ -114,9 +115,9 @@ const DebitCardScreen = ({ navigation }) => {
             </View>
             <View style={styles.optionsRowWrapper}>
               <Image
-                resizeMode={"contain"}
+                resizeMode="contain"
                 style={styles.optionImage}
-                source={require('../assets/Transfer_limit.png')}
+                source={Transfer_Limit_Logo}
               />
               <View style={styles.rowTextWrapper}>
                 <Text style={styles.weeklyLimitTitle}>{Constants.weekly_spending_limit}</Text>
@@ -125,7 +126,7 @@ const DebitCardScreen = ({ navigation }) => {
               <Switch
                 style={styles.switch}
                 trackColor={{ false: "#01D167", true: "#01D167" }}
-                thumbColor={"#FFFFFF"}
+                thumbColor="#FFFFFF"
                 onValueChange={toggleSwitch}
                 value={debitCardDetails ? debitCardDetails.set_weekly_limit : false}
               />
@@ -134,7 +135,7 @@ const DebitCardScreen = ({ navigation }) => {
               <Image
                 resizeMode={"contain"}
                 style={styles.optionImage}
-                source={require('../assets/insight.png')}
+                source={Insight_Logo}
               />
               <View style={styles.rowTextWrapper}>
                 <Text style={styles.weeklyLimitTitle}>{Constants.get_a_new_card}</Text>
@@ -143,9 +144,9 @@ const DebitCardScreen = ({ navigation }) => {
             </View>
             <View style={styles.optionsRowWrapper}>
               <Image
-                resizeMode={"contain"}
+                resizeMode="contain"
                 style={styles.optionImage}
-                source={require('../assets/Transfer_limit.png')}
+                source={Transfer_Limit_Logo}
               />
               <View style={styles.rowTextWrapper}>
                 <Text style={styles.weeklyLimitTitle}>{Constants.deactivated_cards}</Text>
@@ -154,9 +155,9 @@ const DebitCardScreen = ({ navigation }) => {
             </View>
             <View style={styles.optionsRowWrapper}>
               <Image
-                resizeMode={"contain"}
+                resizeMode="contain"
                 style={styles.optionImage}
-                source={require('../assets/insight.png')}
+                source={Insight_Logo}
               />
               <View style={[styles.rowTextWrapper, styles.bottomMargin]}>
                 <Text style={styles.weeklyLimitTitle}>{Constants.freeze_cards}</Text>
@@ -200,15 +201,18 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollView: {
+    // @TODO
     top: -185//-windowHeight * 0.27,//-185,
     // backgroundColor:'red'
   },
   scrollContainerView: {
     backgroundColor: 'transparent',
     width: '100%',
+    // @TODO
     paddingTop: 250//windowHeight * 0.35//250
   },
   contentView: {
+    // @TODO
     paddingTop: 160,// windowHeight * 0.22,//160,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
@@ -235,8 +239,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   debitText: {
-    fontSize: 24,
     color: '#fff',
+    fontSize: 24,
     padding: 20,
     fontFamily: 'Avenir Next',
     fontWeight: 'bold'

@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { Dimensions, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from '../utility/Constants';
+import showEyeImage from '../assets/show_eye.png';
+import eyeClosedImage from '../assets/eye_closed.png';
+import AspireLogo from '../assets/Aspire_Logo.png';
+import VisaLogo from '../assets/visa_logo.png';
 
 const windowHeight = Dimensions.get('window').height;
+
 interface CardViewProps {
     cardHolderName: String,
     cardNumber: String
@@ -18,23 +23,20 @@ const CardView = ({
     cardCVV,
     cardType
 }) => {
-    
     const [hidden, setHidden] = useState(false);
+
     return (
         <View
             style={styles.container}>
             <TouchableOpacity
                 style={styles.hideView}
-                onPress={() => {
-                    console.log("presed ")
-                    setHidden(!hidden)
-                }}>
+                onPress={() => setHidden(prevState => !prevState)}>
                 <View
                     style={styles.hideContentsView}>
                     <Image
-                        resizeMode={"contain"}
+                        resizeMode="contain"
                         style={styles.eyeImage}
-                        source={hidden ? require('../assets/show_eye.png') : require('../assets/eye_closed.png')}
+                        source={hidden ? showEyeImage : eyeClosedImage}
                     >
                     </Image>
                     <Text style={styles.hideText}>{hidden ? Constants.show_card_number : Constants.hide_card_number}</Text>
@@ -46,27 +48,27 @@ const CardView = ({
                     <Image
                         resizeMode={"contain"}
                         style={styles.logoImage}
-                        source={require("../assets/Aspire_Logo.png")}
+                        source={AspireLogo}
                     >
                     </Image>
                 </View>
                 <Text style={styles.cardHolderName}>{cardHolderName}</Text>
 
                 <View style={styles.cardNumberView}>
-                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber && cardNumber.slice(0, 4)}</Text>
-                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber &&  cardNumber.slice(4, 8)}</Text>
-                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber &&  cardNumber.slice(8, 12)}</Text>
-                    <Text style={styles.cardNumberText}>{cardNumber &&  cardNumber.slice(12, 16)}</Text>
+                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber?.slice(0, 4)}</Text>
+                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber?.slice(4, 8)}</Text>
+                    <Text style={styles.cardNumberText}>{hidden ? '****' : cardNumber?.slice(8, 12)}</Text>
+                    <Text style={styles.cardNumberText}>{cardNumber?.slice(12, 16)}</Text>
                 </View>
                 <View style={styles.expiryAndCVV}>
-                    <Text style={styles.cardNumberText}>{cardValidity &&`Thru: ${ cardValidity}`}</Text>
+                    <Text style={styles.cardNumberText}>{cardValidity && `Thru: ${cardValidity}`}</Text>
                     <Text style={styles.cardNumberText}>{cardCVV && `CVV: ${hidden ? '***' : cardCVV}`}</Text>
                 </View>
                 <View style={styles.visaImageView}>
                     <Image
-                        resizeMode={"contain"}
+                        resizeMode="contain"
                         style={styles.visaImage}
-                        source={require("../assets/visa_logo.png")} />
+                        source={VisaLogo} />
                 </View>
             </View>
         </View>
@@ -78,10 +80,10 @@ export default CardView;
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1,
         width: '90%',
         alignSelf: 'center',
         position: 'absolute',
+        // @TODO
         marginTop: 150//windowHeight * 0.21//140
     },
     cardView: {
@@ -97,11 +99,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignSelf: 'flex-end',
         backgroundColor: '#fff',
+        alignItems: 'center',
         borderTopRightRadius: 4,
         borderTopLeftRadius: 4,
-        alignItems: 'center',
         paddingHorizontal: 10,
         height: 45,
+        // @TODO
         bottom: -12,
         marginRight: 1
     },
@@ -110,37 +113,37 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 12,
     },
-    eyeImage: { 
+    eyeImage: {
         width: 22,
-         height: 22 
-        },
+        height: 22
+    },
     hideText: {
-        fontSize: 13,
         fontWeight: 'bold',
         color: '#01D167',
+        fontSize: 13,
         paddingLeft: 10
     },
     cardHolderName: {
-        fontSize: 22,
         fontWeight: 'bold',
+        color: '#FFFFFF',
         marginHorizontal: 20,
         marginBottom: 20,
-        color: '#FFFFFF',
+        fontSize: 22,
         fontFamily: 'Avenir Next'
     },
     cardNumberView: {
-        fontSize: 14,
         flexDirection: 'row',
         justifyContent: 'flex-start',
+        fontSize: 14,
         marginHorizontal: 20,
         marginVertical: 5
     },
     cardNumberText: {
+        color: '#FFFFFF',
+        fontWeight: '600',
         letterSpacing: 4,
         fontSize: 15,
-        fontWeight: '600',
         marginRight: 20,
-        color: '#FFFFFF',
         fontFamily: 'Avenir Next'
     },
     expiryAndCVV: {
