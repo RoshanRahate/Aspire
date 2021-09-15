@@ -14,8 +14,9 @@ import {
 import {useSelector, useDispatch} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {updateCardDetails} from '../reducers/uiReducer';
-import {currencyFormatter, updateCardSpendingLimit} from '../utility';
+import {currencyFormatter} from '../utility';
 import Constants from '../utility/Constants';
+import {updateCardSpendingLimit} from '../apiServices';
 
 const SpendingLimitScreen = ({navigation}) => {
   const dispatch = useDispatch();

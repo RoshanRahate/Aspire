@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   Alert,
   View,
@@ -18,14 +18,14 @@ import Transfer_Limit_Logo from '../assets/Transfer_limit.png';
 import {setCardDetails, updateCardDetails} from '../reducers/uiReducer';
 import CardView from '../components/CardView';
 import {currencyFormatter} from '../utility';
-import {updateCardSpendingLimit, getDebitCardDetails} from '../utility';
+import {updateCardSpendingLimit, getDebitCardDetails} from '../apiServices';
 import Constants, {AVAILABLE_ROUTES} from '../utility/Constants';
 
 const windowWidth = Dimensions.get('window').width;
 
 /**
  * This represents the Debit card screen, includes the CardView component and
- * performs operations to get the debit card details and set the card monthly limit 
+ * performs operations to get the debit card details and set the card monthly limit
  * @param navigation - navigation route
  * @returns JSX
  */
@@ -45,29 +45,35 @@ const DebitCardScreen = ({navigation}) => {
     getData();
   }, [dispatch]);
 
-  const toggleSwitch = enabled => {
-    if (enabled) {
-      navigation.navigate(
-        AVAILABLE_ROUTES.SPENDING_LIMIT_SCREEN,
-        debitCardDetails,
-      );
-    } else {
-      updateSpendingLimit(false, 0);
-    }
-  };
+  const updateSpendingLimit = useCallback(
+    async (isEnabled, amount) => {
+      try {
+        const updatedCardDetails = await updateCardSpendingLimit(
+          debitCardDetails,
+          isEnabled,
+          amount,
+        );
+        dispatch(updateCardDetails(updatedCardDetails));
+      } catch (e) {
+        Alert.alert(Constants.check_network_connection);
+      }
+    },
+    [debitCardDetails, dispatch],
+  );
 
-  const updateSpendingLimit = async (isEnabled, amount) => {
-    try {
-      const updatedCardDetails = await updateCardSpendingLimit(
-        debitCardDetails,
-        isEnabled,
-        amount,
-      );
-      dispatch(updateCardDetails(updatedCardDetails));
-    } catch (e) {
-      Alert.alert(Constants.check_network_connection);
-    }
-  };
+  const toggleSwitch = useCallback(
+    enabled => {
+      if (enabled) {
+        navigation.navigate(
+          AVAILABLE_ROUTES.SPENDING_LIMIT_SCREEN,
+          debitCardDetails,
+        );
+      } else {
+        updateSpendingLimit(false, 0);
+      }
+    },
+    [debitCardDetails, navigation, updateSpendingLimit],
+  );
 
   const getProgressValue = () => {
     return Math.min(

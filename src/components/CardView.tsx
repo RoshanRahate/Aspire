@@ -15,11 +15,11 @@ interface CardViewProps {
 }
 
 /**
- * This component returns the CardView JSX with the details provided by the props 
- * @param props 
- * cardHolderName: String; 
- * cardNumber: String; 
- * cardValidity: String; 
+ * This component returns the CardView JSX with the details provided by the props
+ * @param props
+ * cardHolderName: String;
+ * cardNumber: String;
+ * cardValidity: String;
  * cardCVV: String;
  * cardType: String;
  * @returns JSX
